@@ -1,0 +1,7 @@
+main: me.littlq.main.Main
+version: 1.0
+name: ReportSystem
+author: Marius
+
+commands:
+  report

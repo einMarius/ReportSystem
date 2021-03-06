@@ -6,25 +6,26 @@ import me.littlq.commands.cmd_report;
 import me.littlq.config.ConfigManager;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 public class Main extends Plugin {
 
     private boolean configisrunning;
     private Thread ConfigThread;
 
-    public static File file;
-    public static Configuration config;
-
     public static ConfigManager cm;
 
-    public static String prefix;
+    private static Main plugin;
 
     public void onEnable() {
+
+        plugin = this;
+
+        //CONFIG
+        cm = new ConfigManager();
 
         configisrunning = !configisrunning;
 
@@ -46,26 +47,9 @@ public class Main extends Plugin {
                         ConfigThread = Thread.currentThread();
 
                         try {
-
-                            if(!getDataFolder().exists()){
-                                getDataFolder().mkdir();
-                            }
-
-                            file = new File(getDataFolder().getParent(), "ReportSystem/config.yml");
-
-                            if(!file.exists()) {
-                                file.createNewFile();
-                                config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
-
-                                ConfigurationProvider.getProvider(YamlConfiguration.class).save(config, file);
-                            }
-                        }catch (IOException ex) {
-                            System.out.println("Es gab einen Fehler beim erstellen der Config.yml");
+                            cm.register();
+                        } catch (IOException e) {
                         }
-
-
-                        cm = new ConfigManager();
-                        cm.register();
 
                         ConfigThread.interrupt();
                         configisrunning = false;
@@ -76,6 +60,8 @@ public class Main extends Plugin {
                 }
             }.start();
         }
+
+        //ENDE CONFIG
 
         getProxy().getPluginManager().registerCommand(this, new cmd_report());
 
@@ -102,6 +88,10 @@ public class Main extends Plugin {
         System.out.println("----------[ReportSystem]----------");
 // -------------------------------
 
+    }
+
+    public static Main getPlugin(){
+        return plugin;
     }
 
 }

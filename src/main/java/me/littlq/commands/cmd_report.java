@@ -2,15 +2,25 @@
 
 package me.littlq.commands;
 
+import me.littlq.config.ConfigManager;
+import me.littlq.report.ReportCause;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class cmd_report extends Command {
 
     public cmd_report() {
         super("report");
     }
+
+    private static HashMap<ProxiedPlayer, String> reportlist = new HashMap<>();
+    public static List<ProxiedPlayer> loggin = new ArrayList<>();
 
     @Override
     public void execute(CommandSender sender, String[] args) {
@@ -23,16 +33,80 @@ public class cmd_report extends Command {
 
                 if(args.length == 1){
 
+                    if(args[0].equalsIgnoreCase("login")){
+                        if(!loggin.contains(p)){
+                            for(ProxiedPlayer team : ProxyServer.getInstance().getPlayers()){
+                                if(loggin.contains(team)){
+                                    //team message
+                                    String otheruserloginmsg = ConfigManager.otheruserlogin.replace("%PLAYER%", p.getName());
+                                    team.sendMessage(ConfigManager.prefix + otheruserloginmsg);
+                                }
+                            }
+                            loggin.add(p);
+                            p.sendMessage(ConfigManager.prefix + ConfigManager.login);
+
+                        }else
+                            p.sendMessage(ConfigManager.prefix + ConfigManager.alreadyloggedin);
+
+                    } else if(args[0].equalsIgnoreCase("logout")){
+                        if(loggin.contains(p)){
+                            loggin.remove(p);
+                            p.sendMessage(ConfigManager.prefix + ConfigManager.logout);
+                            for(ProxiedPlayer team : ProxyServer.getInstance().getPlayers()){
+                                if(loggin.contains(team)){
+                                    //team message
+                                    String otheruserlogoutmsg = ConfigManager.otheruserloggout.replace("%PLAYER%", p.getName());
+                                    team.sendMessage(ConfigManager.prefix + otheruserlogoutmsg);
+                                }
+                            }
+
+                        }else
+                            p.sendMessage(ConfigManager.prefix + ConfigManager.alreadyloggedin);
+
+                    } else if(args[0].equalsIgnoreCase("list")){
+                        if(loggin.contains(p)){
+                            p.sendMessage("");
+                            p.sendMessage(ConfigManager.prefix + "§8----------= §4Reports §8=----------");
+                            for(ProxiedPlayer team : reportlist.keySet()){
+                                p.sendMessage(ConfigManager.prefix + team.getName() + " §8× §7" + reportlist.get(team.getName()));
+                                continue;
+                            }
+
+                        }else
+                            p.sendMessage(ConfigManager.prefix + ConfigManager.mustbeloggedin);
+
+                    }
+                } else {
+                    p.sendMessage("Wrong args");
                 }
 
             } else {
 
-                if(args.length == 1){
+                if(args.length == 2){
+
+                    ProxiedPlayer reportedplayer = ProxyServer.getInstance().getPlayer(args[0]);
+                    String cause = args[1];
+                    cause = ReportCause.getReportCause(cause);
+
+                    if(!(reportedplayer == null)) {
+                        if(reportedplayer == p) {
 
 
+                            if (cause == null) {
+                                p.sendMessage(ConfigManager.prefix + "Gültige Reportgründe: Hacking, Teaming, Bugusing, Boosting, Name, Skin, Clan, Trolling, Hunting");
+                                return;
+                            }
 
-                }
+                            String reportsuccesplayer = ConfigManager.reportsucces.replace("%PLAYER%", args[0]);
+                            p.sendMessage(ConfigManager.prefix + reportsuccesplayer);
 
+                            reportlist.put(reportedplayer, cause);
+                        }else
+                            p.sendMessage(ConfigManager.prefix + ConfigManager.selfreport);
+                    }else
+                        p.sendMessage(ConfigManager.prefix + ConfigManager.usernotonline);
+                } else
+                     p.sendMessage(ConfigManager.prefix + ConfigManager.wrongusage);
             }
 
         } else

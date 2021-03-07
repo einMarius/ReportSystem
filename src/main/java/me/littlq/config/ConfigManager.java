@@ -15,6 +15,13 @@ public class ConfigManager {
 
     public static String prefix;
     public static String wrongusage;
+
+    public static String host;
+    public static int port;
+    public static String database;
+    public static String username;
+    public static String password;
+
     public static String reportsucces;
     public static String usernotonline;
     public static String selfreport;
@@ -48,6 +55,11 @@ public class ConfigManager {
 
                 config.set("Einstellungen.Prefix", "&c&lReport &8&l✕ &7");
                 config.set("Einstellungen.Falsche Argumentenkette", "Benutze /report <Spieler> <Grund>");
+                config.set("MySQL.Host", "localhost");
+                config.set("MySQL.Port", "3306");
+                config.set("MySQL.Database", "reportsystem");
+                config.set("MySQL.Username", "root");
+                config.set("MySQL.Password", "");
                 config.set("Report.Spieler reportet", "Du hast den Spieler &c%PLAYER% &7erfolgreich reportet!");
                 config.set("Report.Spieler nicht online", "Der Spieler ist nicht online!");
                 config.set("Report.Selfreport", "Du kannst dich nicht selbst reporten!");
@@ -59,7 +71,7 @@ public class ConfigManager {
                 config.set("Report.Anderer User Logout", "Der Spieler %PLAYER% hat sich ausgeloggt!");
                 config.set("Report.Muss eingeloggt sein", "Du musst eingeloggt sein!");
                 config.set("Report.Keine Reports", "Es sind derzeit keine Reports offen!");
-                config.set("Report.Neuer Report", "%PLAYER% wurde wegen %GRUND% reportet!");
+                config.set("Report.Neuer Report", "&c%PLAYER% &7wurde wegen &c%GRUND% &7reportet!");
 
                 saveCfg();
             }
@@ -69,11 +81,25 @@ public class ConfigManager {
         //REGISTER
         config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
 
+        //Einstellungen
+
         prefix = config.getString("Einstellungen.Prefix");
         prefix = ChatColor.translateAlternateColorCodes('&', prefix);
 
         wrongusage = config.getString("Einstellungen.Falsche Argumentenkette");
         wrongusage = ChatColor.translateAlternateColorCodes('&', wrongusage);
+
+        //Ende Einstellungen
+        //MySQL
+
+        host = config.getString("MySQL.Host");
+        port = config.getInt("MySQL.Port");
+        database = config.getString("MySQL.Database");
+        username = config.getString("MySQL.Username");
+        password = config.getString("MySQL.Password");
+
+        //Ende MySQL
+        //Report
 
         reportsucces = config.getString("Report.Spieler reportet");
         reportsucces = ChatColor.translateAlternateColorCodes('&', reportsucces);
@@ -110,6 +136,8 @@ public class ConfigManager {
 
         newreport = config.getString("Report.Neuer Report");
         newreport = ChatColor.translateAlternateColorCodes('&', newreport);
+
+        //Ende Report
     }
 
     public static void saveCfg() {

@@ -4,12 +4,11 @@ package me.littlq.main;
 
 import me.littlq.commands.cmd_report;
 import me.littlq.config.ConfigManager;
+import me.littlq.mysql.MySQL;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.config.Configuration;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
+import java.sql.SQLException;
 
 public class Main extends Plugin {
 
@@ -33,6 +32,7 @@ public class Main extends Plugin {
             new Thread() {
                 @Override
                 public void run() {
+
                     super.run();
 
                     while (configisrunning) {
@@ -51,15 +51,16 @@ public class Main extends Plugin {
                         } catch (IOException e) {
                         }
 
+
+
                         ConfigThread.interrupt();
                         configisrunning = false;
-
-                        System.out.println(ConfigThread.getId());
-
                     }
                 }
             }.start();
         }
+
+        MySQL.connect();
 
         //ENDE CONFIG
 
@@ -77,6 +78,14 @@ public class Main extends Plugin {
     }
 
     public void onDisable() {
+
+        if(MySQL.isConnected()) {
+            try {
+                MySQL.disconnect();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
 
         cm.saveCfg();
 

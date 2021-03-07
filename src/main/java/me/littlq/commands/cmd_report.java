@@ -2,8 +2,8 @@
 
 package me.littlq.commands;
 
-import com.google.common.collect.HashBasedTable;
 import me.littlq.config.ConfigManager;
+import me.littlq.mysql.MySQL;
 import me.littlq.report.ReportCause;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -20,7 +20,7 @@ public class cmd_report extends Command {
         super("report");
     }
 
-    private static HashMap<ProxiedPlayer, String> reportlist = new HashMap<>();
+    public static HashMap<ProxiedPlayer, String> reportlist = new HashMap<>();
     public static List<ProxiedPlayer> loggin = new ArrayList<>();
 
     @Override
@@ -70,7 +70,7 @@ public class cmd_report extends Command {
                                 p.sendMessage("");
                                 p.sendMessage(ConfigManager.prefix + "§7----------= §cReports §7=----------");
                                 for (ProxiedPlayer team : reportlist.keySet()) {
-                                    p.sendMessage(ConfigManager.prefix + team.getName() + " §8| §7von " + reportlist.get(team));
+                                    p.sendMessage(ConfigManager.prefix + "Spieler: §c" + team.getName() + " §8| §7wegen §c" + reportlist.get(team).toString());
                                     continue;
                                 }
                             }else
@@ -103,6 +103,7 @@ public class cmd_report extends Command {
                             String reportsuccesplayer = ConfigManager.reportsucces.replace("%PLAYER%", args[0]);
                             p.sendMessage(ConfigManager.prefix + reportsuccesplayer);
                             reportlist.put(reportedplayer, cause);
+                            MySQL.setReport(reportedplayer, cause, p);
 
                             for(ProxiedPlayer team : loggin){
                                 String report = ConfigManager.newreport.replace("%PLAYER%", args[0]);

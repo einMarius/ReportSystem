@@ -25,6 +25,8 @@ public class ConfigManager {
     public static String otheruserlogin;
     public static String otheruserloggout;
     public static String mustbeloggedin;
+    public static String openreports;
+    public static String newreport;
 
     public static Configuration config;
     public static File file;
@@ -44,7 +46,7 @@ public class ConfigManager {
 
                 config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
 
-                config.set("Einstellungen.Prefix", "&c&lReport &8&l× &7");
+                config.set("Einstellungen.Prefix", "&c&lReport &8&l✕ &7");
                 config.set("Einstellungen.Falsche Argumentenkette", "Benutze /report <Spieler> <Grund>");
                 config.set("Report.Spieler reportet", "Du hast den Spieler &c%PLAYER% &7erfolgreich reportet!");
                 config.set("Report.Spieler nicht online", "Der Spieler ist nicht online!");
@@ -56,6 +58,8 @@ public class ConfigManager {
                 config.set("Report.Anderer User Login", "Der Spieler %PLAYER% hat sich eingeloggt!");
                 config.set("Report.Anderer User Logout", "Der Spieler %PLAYER% hat sich ausgeloggt!");
                 config.set("Report.Muss eingeloggt sein", "Du musst eingeloggt sein!");
+                config.set("Report.Keine Reports", "Es sind derzeit keine Reports offen!");
+                config.set("Report.Neuer Report", "%PLAYER% wurde wegen %GRUND% reportet!");
 
                 saveCfg();
             }
@@ -100,6 +104,12 @@ public class ConfigManager {
 
         mustbeloggedin = config.getString("Report.Muss eingeloggt sein");
         mustbeloggedin = ChatColor.translateAlternateColorCodes('&', mustbeloggedin);
+
+        openreports = config.getString("Report.Keine Reports");
+        openreports = ChatColor.translateAlternateColorCodes('&', openreports);
+
+        newreport = config.getString("Report.Neuer Report");
+        newreport = ChatColor.translateAlternateColorCodes('&', newreport);
     }
 
     public static void saveCfg() {

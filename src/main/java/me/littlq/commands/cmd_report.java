@@ -2,6 +2,7 @@
 
 package me.littlq.commands;
 
+import com.google.common.collect.HashBasedTable;
 import me.littlq.config.ConfigManager;
 import me.littlq.report.ReportCause;
 import net.md_5.bungee.api.CommandSender;
@@ -65,13 +66,15 @@ public class cmd_report extends Command {
 
                     } else if(args[0].equalsIgnoreCase("list")){
                         if(loggin.contains(p)){
-                            p.sendMessage("");
-                            p.sendMessage(ConfigManager.prefix + "§8----------= §4Reports §8=----------");
-                            for(ProxiedPlayer team : reportlist.keySet()){
-                                p.sendMessage(ConfigManager.prefix + team.getName() + " §8× §7" + reportlist.get(team.getName()));
-                                continue;
-                            }
-
+                            if(!reportlist.isEmpty()) {
+                                p.sendMessage("");
+                                p.sendMessage(ConfigManager.prefix + "§7----------= §cReports §7=----------");
+                                for (ProxiedPlayer team : reportlist.keySet()) {
+                                    p.sendMessage(ConfigManager.prefix + team.getName() + " §8| §7von " + reportlist.get(team));
+                                    continue;
+                                }
+                            }else
+                                p.sendMessage(ConfigManager.prefix + ConfigManager.openreports);
                         }else
                             p.sendMessage(ConfigManager.prefix + ConfigManager.mustbeloggedin);
 
@@ -89,7 +92,7 @@ public class cmd_report extends Command {
                     cause = ReportCause.getReportCause(cause);
 
                     if(!(reportedplayer == null)) {
-                        if(reportedplayer == p) {
+                        if(!(reportedplayer == p)) {
 
 
                             if (cause == null) {
@@ -99,8 +102,14 @@ public class cmd_report extends Command {
 
                             String reportsuccesplayer = ConfigManager.reportsucces.replace("%PLAYER%", args[0]);
                             p.sendMessage(ConfigManager.prefix + reportsuccesplayer);
-
                             reportlist.put(reportedplayer, cause);
+
+                            for(ProxiedPlayer team : loggin){
+                                String report = ConfigManager.newreport.replace("%PLAYER%", args[0]);
+                                String reportuse = report.replace("%GRUND%", args[1]);
+                                team.sendMessage(ConfigManager.prefix + reportuse);
+                            }
+
                         }else
                             p.sendMessage(ConfigManager.prefix + ConfigManager.selfreport);
                     }else

@@ -15,9 +15,11 @@ public class Utils {
         p.sendMessage(plugin.getConfigManager().prefix + "§7----------= §cHelp §7=----------");
         p.sendMessage(plugin.getConfigManager().prefix + "Benutze /§creport login");
         p.sendMessage(plugin.getConfigManager().prefix + "Benutze /§creport logout");
+        p.sendMessage(plugin.getConfigManager().prefix + "Benutze /§creport list");
         p.sendMessage(plugin.getConfigManager().prefix + "Benutze /§creport next");
-        p.sendMessage(plugin.getConfigManager().prefix + "Benutze /§creport accept §7§<§cSpieler§7>");
         p.sendMessage(plugin.getConfigManager().prefix + "Benutze /§creport info");
+        p.sendMessage(plugin.getConfigManager().prefix + "Benutze /§creport finish");
+        p.sendMessage(plugin.getConfigManager().prefix + "Benutze /§creport accept §7<§cSpieler§7>");
         p.sendMessage(plugin.getConfigManager().prefix + "§7----------= §cHelp §7=----------");
 
     }

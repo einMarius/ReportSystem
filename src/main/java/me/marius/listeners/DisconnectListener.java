@@ -20,13 +20,18 @@ public class DisconnectListener implements Listener {
     public void onReportedPlayerDisconnect(PlayerDisconnectEvent e) {
         ProxiedPlayer p = e.getPlayer();
 
+        if(plugin.getCmd_report().reportmodus.contains(p))
+            plugin.getCmd_report().reportmodus.remove(p);
+
+        if(Report.reported.containsKey(p)) {
+            for (ProxiedPlayer team : plugin.getCmd_report().loggin) {
+                String reportedplayernowoffline = plugin.getConfigManager().reportedplayeroffline.replace("%PLAYER%", p.getName());
+                team.sendMessage(plugin.getConfigManager().prefix + reportedplayernowoffline);
+            }
+        }
+
         if(Report.reported.containsKey(p))
             Report.reported.remove(p);
-
-        for(ProxiedPlayer team : plugin.getCmd_report().loggin){
-            String reportedplayernowoffline = plugin.getConfigManager().reportedplayeroffline.replace("%PLAYER%", p.getName());
-            team.sendMessage(plugin.getConfigManager().prefix + reportedplayernowoffline);
-        }
 
     }
 

@@ -34,6 +34,7 @@ public class cmd_report extends Command {
     private boolean isrunningGetList;
     private boolean isrunningSetList;
     private boolean isrunningAcceptReport;
+    private boolean isrunningGetReportInfo;
 
     @Override
     public void execute(CommandSender sender, String[] args) {
@@ -63,22 +64,23 @@ public class cmd_report extends Command {
 
                     } else if(args[0].equalsIgnoreCase("logout")){
                         if(loggin.contains(p)){
-                            loggin.remove(p);
-                            p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().logout);
-                            for(ProxiedPlayer team : ProxyServer.getInstance().getPlayers()){
-                                if(loggin.contains(team)){
-                                    //team message
-                                    String otheruserlogoutmsg = plugin.getConfigManager().otheruserloggout.replace("%PLAYER%", p.getName());
-                                    team.sendMessage(plugin.getConfigManager().prefix + otheruserlogoutmsg);
+                            if(!reportmodus.contains(p)) {
+                                loggin.remove(p);
+                                p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().logout);
+                                for (ProxiedPlayer team : ProxyServer.getInstance().getPlayers()) {
+                                    if (loggin.contains(team)) {
+                                        //team message
+                                        String otheruserlogoutmsg = plugin.getConfigManager().otheruserloggout.replace("%PLAYER%", p.getName());
+                                        team.sendMessage(plugin.getConfigManager().prefix + otheruserlogoutmsg);
+                                    }
                                 }
-                            }
-
+                            }else
+                                p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().mustreportfinish);
                         }else
                             p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().alreadyloggedin);
 
                     } else if(args[0].equalsIgnoreCase("list")){
                         if(loggin.contains(p)){
-
                             isrunningGetList = !isrunningGetList;
 
                             new Thread(){
@@ -87,23 +89,25 @@ public class cmd_report extends Command {
                                     super.run();
 
                                     while (isrunningGetList) {
-                                        try {
-                                            Thread.sleep(250);
-                                        } catch (InterruptedException ex) {
-                                            ex.printStackTrace();
-                                        }
-
                                         if (!Report.reported.isEmpty()) {
+                                            p.sendMessage("");
+                                            p.sendMessage(plugin.getConfigManager().prefix + "----------= §c§lReports §7=----------");
                                             for (ProxiedPlayer reportet : Report.reported.keySet()) {
-                                                p.sendMessage(plugin.getConfigManager().prefix + "Spieler: §c" + reportet.getName() + " §8┃ §7wegen: §c" +
-                                                        plugin.getReport().getReportet(reportet) + " §8┃ §7von: §c" + plugin.getReport().getReporter(Report.reported.get(reportet)) +
+                                                p.sendMessage("§7Spieler: §c" + reportet.getName() + " §8┃ §7wegen: §c" +
+                                                        Report.reported_cause.get(reportet) + " §8┃ §7von: §c" + plugin.getReport().getReporter(Report.reported.get(reportet)) +
                                                         " §8┃ §7aktuell auf §c" + reportet.getServer().getInfo().getName());
                                                 continue;
                                             }
+                                            p.sendMessage(plugin.getConfigManager().prefix + "----------= §c§lReports §7=----------");
 
                                         }else
                                             p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().noreportsopen);
 
+                                        try{
+                                            Thread.sleep(250);
+                                        }catch (InterruptedException ex){
+                                            ex.printStackTrace();
+                                        }
                                         isrunningGetList = false;
                                     }
                                 }
@@ -114,47 +118,93 @@ public class cmd_report extends Command {
 
                     } else if(args[0].equalsIgnoreCase("next")){
                         if(loggin.contains(p)){
-                            isrunningAcceptReport = !isrunningAcceptReport;
-                            new Thread(){
-                                @Override
-                                public void run(){
-                                    super.run();
+                            if(!reportmodus.contains(p)) {
+                                isrunningAcceptReport = !isrunningAcceptReport;
+                                new Thread() {
+                                    @Override
+                                    public void run() {
+                                        super.run();
 
-                                    while (isrunningAcceptReport){
-                                        try{
-                                            Thread.sleep(250);
-                                        }catch (InterruptedException ex){
-                                            ex.printStackTrace();
-                                        }
-                                        for(ProxiedPlayer reportet : Report.reported.keySet()) {
-                                            if(Report.reported.values().iterator().hasNext()) {
-                                                reportmodus.add(p);
-                                                p.sendMessage(plugin.getConfigManager().prefix + "Du hast den Spieler §c" + reportet + " §7angenommen!");
-                                                p.connect(ProxyServer.getInstance().getServerInfo(reportet.getServer().getInfo().getName()));
-                                                Report.reported.remove(reportet);
-                                                break;
+                                        while (isrunningAcceptReport) {
+                                            if (!Report.reported.isEmpty()) {
+                                                for (ProxiedPlayer reportet : Report.reported.keySet()) {
+                                                    if (Report.reported.values().iterator().hasNext()) {
+                                                        reportmodus.add(p);
+                                                        p.sendMessage(plugin.getConfigManager().prefix + "Du hast den Spieler §c" + reportet + " §7angenommen!");
+                                                        p.connect(ProxyServer.getInstance().getServerInfo(reportet.getServer().getInfo().getName()));
+                                                        Report.reported.remove(reportet);
+                                                        break;
+                                                    }
+                                                }
+                                            } else
+                                                p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().noreportsopen);
+                                            try {
+                                                Thread.sleep(250);
+                                            } catch (InterruptedException ex) {
+                                                ex.printStackTrace();
                                             }
+                                            isrunningAcceptReport = false;
                                         }
-                                        isrunningAcceptReport = false;
                                     }
-                                }
-                            }.start();
+                                }.start();
+                            }else
+                                p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().alreadymakingreport);
+                        }else
+                            p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().mustbeloggedin);
+                    }else if(args[0].equalsIgnoreCase("info")){
+                        if(loggin.contains(p)){
+                            if(reportmodus.contains(p)){
+                                isrunningGetReportInfo = !isrunningGetReportInfo;
+                                new Thread(){
+                                    @Override
+                                    public void run(){
+                                        super.run();
+                                        while(isrunningGetReportInfo){
+
+                                            p.sendMessage("Report Info");
+
+                                            try{
+                                                Thread.sleep(250);
+                                            }catch (InterruptedException ex){
+                                                ex.printStackTrace();
+                                            }
+                                            isrunningGetReportInfo = false;
+                                        }
+                                    }
+                                }.start();
+                            }else
+                                p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().noreport);
+                        }else
+                            p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().mustbeloggedin);
+                    }else if(args[0].equalsIgnoreCase("finish")){
+                        if(loggin.contains(p)){
+                            if(reportmodus.contains(p)){
+                                reportmodus.remove(p);
+                                p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().reportfinish);
+                            }else
+                                p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().noreport);
                         }else
                             p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().mustbeloggedin);
                     }else
                         plugin.getUtils().sendTeamHelpMessage(p);
                 } else if(args.length == 2){
-                    if(args[0].equalsIgnoreCase("accept")){
-                        reportedplayer = ProxyServer.getInstance().getPlayer(args[1]);
-                        if(plugin.getReport().reported.containsKey(reportedplayer)){
-                            reportmodus.add(p);
-                            p.sendMessage(plugin.getConfigManager().prefix + "Du hast den Spieler §c" + reportedplayer + " §7angenommen!");
-                            p.connect(ProxyServer.getInstance().getServerInfo(reportedplayer.getServer().getInfo().getName()));
-                            Report.reported.remove(reportedplayer);
-                        }else
-                            p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().noreportforthisplayer);
-                    } else
-                        plugin.getUtils().sendTeamHelpMessage(p);
+                        if (args[0].equalsIgnoreCase("accept")) {
+                            if(loggin.contains(p)) {
+                                if(!reportmodus.contains(p)) {
+                                    reportedplayer = ProxyServer.getInstance().getPlayer(args[1]);
+                                    if (Report.reported.containsKey(reportedplayer)) {
+                                        reportmodus.add(p);
+                                        Report.reported.remove(reportedplayer);
+                                        p.sendMessage(plugin.getConfigManager().prefix + "Du hast den Spieler §c" + reportedplayer + " §7angenommen!");
+                                        p.connect(ProxyServer.getInstance().getServerInfo(reportedplayer.getServer().getInfo().getName()));
+                                    } else
+                                        p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().noreportforthisplayer);
+                                }else
+                                    p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().alreadymakingreport);
+                            } else
+                                p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().mustbeloggedin);
+                        } else
+                            plugin.getUtils().sendTeamHelpMessage(p);
                 }else
                     plugin.getUtils().sendTeamHelpMessage(p);
 
@@ -166,11 +216,10 @@ public class cmd_report extends Command {
                     cause = ReportCause.getReportCause(cause);
 
                     if(!(reportedplayer == null)) {
-                        //if(!(reportedplayer == p)) {
                         if(!Report.reported.containsKey(reportedplayer)) {
-
+                            //if(!(reportedplayer == p)) {
                             if (cause == null) {
-                                reporter.sendMessage(plugin.getConfigManager().prefix + "Gültige Reportgründe: " + ReportCause.enumValue.toString());
+                                reporter.sendMessage(plugin.getConfigManager().prefix + "Gültige Reportgründe: " + ReportCause.getNames(ReportCause.class));
                                 return;
                             }
 
@@ -182,12 +231,12 @@ public class cmd_report extends Command {
                                     super.run();
 
                                     while (isrunningSetList) {
+                                        plugin.getReport().newReport(reportedplayer, p, cause);
                                         try {
                                             Thread.sleep(250);
                                         } catch (InterruptedException ex) {
                                             ex.printStackTrace();
                                         }
-                                        new Report(reportedplayer, p, cause);
                                         isrunningSetList = false;
                                     }
 
@@ -199,14 +248,22 @@ public class cmd_report extends Command {
 
                             for (ProxiedPlayer team : loggin) {
                                 String report = plugin.getConfigManager().newreport.replace("%PLAYER%", args[0]);
-                                String reportuse = report.replace("%GRUND%", args[1].toUpperCase(Locale.ROOT));
+                                String reportuse = report.replace("%GRUND%", cause);
                                 team.sendMessage(plugin.getConfigManager().prefix + reportuse);
                             }
 
                             //}else
                             //p.sendMessage(ConfigManager.prefix + ConfigManager.selfreport);
-                        }else
-                            reporter.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().alreadyreported);
+                        } else {
+                            String reportsuccesplayer = plugin.getConfigManager().reportsucces.replace("%PLAYER%", args[0]);
+                            reporter.sendMessage(plugin.getConfigManager().prefix + reportsuccesplayer);
+
+                            for (ProxiedPlayer team : loggin) {
+                                String report = plugin.getConfigManager().newreport.replace("%PLAYER%", args[0]);
+                                String reportuse = report.replace("%GRUND%", cause);
+                                team.sendMessage(plugin.getConfigManager().prefix + reportuse);
+                            }
+                        }
                     }else
                         reporter.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().usernotonline);
                 } else

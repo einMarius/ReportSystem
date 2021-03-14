@@ -16,17 +16,13 @@ public class Report {
     public static HashMap<ProxiedPlayer, ProxiedPlayer> reported = new HashMap<>();
     //1. Reported player, String cause
     public static HashMap<ProxiedPlayer, String> reported_cause = new LinkedHashMap<>();
-    public static Iterator<Map.Entry<ProxiedPlayer, ProxiedPlayer>> iterator = reported.entrySet().iterator();
     private ProxiedPlayer reportet;
     private ProxiedPlayer reporter;
     private String reason;
 
-    public Report (ProxiedPlayer reportet, ProxiedPlayer reporter, String reason){
-        this.reportet = reportet;
-        this.reporter = reporter;
-        this.reason = reason;
-        reported.put(reportet, reporter);
-        reported_cause.put(reportet, reason);
+    public void newReport(ProxiedPlayer reportet, ProxiedPlayer reporter, String reason){
+        this.reported.put(reportet, reporter);
+        this.reported_cause.put(reportet, reason);
     }
 
     public ProxiedPlayer getReportet(ProxiedPlayer reportet){

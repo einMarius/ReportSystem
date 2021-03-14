@@ -1,4 +1,4 @@
-main: me.littlq.main.Main
+main: me.marius.main.Main
 version: 1.0
 name: ReportSystem
 author: Marius

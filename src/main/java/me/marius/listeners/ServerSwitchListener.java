@@ -21,13 +21,12 @@ public class ServerSwitchListener implements Listener {
 
         for(ProxiedPlayer team : ProxyServer.getInstance().getPlayers()){
             if(team.hasPermission("report.team")){
+                if (!plugin.getCmd_report().reportmodus.contains(team)) {
                 if(team.getServer().getInfo().getName() == p.getServer().getInfo().getName()) {
-                    if (!plugin.getCmd_report().reportmodus.contains(team)) {
                         team.sendMessage(plugin.getConfigManager().prefix + p.getName() + " hat den Server im Reportmodus betreten!");
                     }
                 }
             }
         }
     }
-
 }

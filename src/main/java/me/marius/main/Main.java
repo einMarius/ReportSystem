@@ -24,9 +24,11 @@ public class Main extends Plugin {
     private DisconnectListener disconnectListener;
     private ServerSwitchListener serverSwitchListener;
 
-    private static Main plugin;
+    private Main plugin;
 
     public void onEnable() {
+
+        plugin = this;
 
         configManager = new ConfigManager(this);
         cmd_report = new cmd_report(this);
@@ -35,7 +37,7 @@ public class Main extends Plugin {
         disconnectListener = new DisconnectListener(this);
         serverSwitchListener = new ServerSwitchListener(this);
 
-        plugin = this;
+
 
         //CONFIG
 
@@ -47,7 +49,6 @@ public class Main extends Plugin {
                 public void run() {
 
                     super.run();
-
                     while (configisrunning) {
 
                         try {
@@ -72,9 +73,9 @@ public class Main extends Plugin {
         }
         //ENDE CONFIG
 
-        getProxy().getPluginManager().registerCommand(this, new cmd_report());
+        getProxy().getPluginManager().registerCommand(this, new cmd_report(this));
         getProxy().getPluginManager().registerListener(this, new DisconnectListener(this));
-        getProxy().getPluginManager().registerListener(this, new ServerSwitchListener(this));
+        //getProxy().getPluginManager().registerListener(this, new ServerSwitchListener(this));
 
 // -------------------------------
         System.out.println("----------[ReportSystem]----------");
@@ -103,7 +104,6 @@ public class Main extends Plugin {
     public DisconnectListener getDisconnectListener(){ return disconnectListener; }
     public Report getReport(){ return report; }
     public Utils getUtils() { return utils; }
-    public static Main getPlugin(){ return plugin; }
     public ConfigManager getConfigManager(){ return configManager; }
     public cmd_report getCmd_report(){ return cmd_report; }
 }

@@ -34,8 +34,11 @@ public class ConfigManager {
     public String noreportsopen;
     public String newreport;
     public String noreportforthisplayer;
-    public String alreadyreported;
     public String reportedplayeroffline;
+    public String noreport;
+    public String alreadymakingreport;
+    public String mustreportfinish;
+    public String reportfinish;
 
     public static Configuration config;
     public static File file;
@@ -44,11 +47,11 @@ public class ConfigManager {
 
         try {
 
-            if(!Main.getPlugin().getDataFolder().exists()){
-                Main.getPlugin().getDataFolder().mkdir();
+            if(!plugin.getDataFolder().exists()){
+                plugin.getDataFolder().mkdir();
             }
 
-            file = new File(Main.getPlugin().getDataFolder().getParent(), "ReportSystem/config.yml");
+            file = new File(plugin.getDataFolder().getParent(), "ReportSystem/config.yml");
 
             if(!file.exists()) {
                 file.createNewFile();
@@ -57,22 +60,24 @@ public class ConfigManager {
 
                 config.set("Einstellungen.Prefix", "&c&lReport &8&l✕ &7");
                 config.set("Einstellungen.Falsche Argumentenkette", "Benutze /report <Spieler> <Grund>");
-                config.set("Report.Spieler reportet", "Du hast den Spieler &c%PLAYER% &7erfolgreich reportet!");
+                config.set("Report.Spieler reportet", "Du hast den Spieler &c%PLAYER% &7erfolgreich reportet.");
                 config.set("Report.Spieler nicht online", "Der Spieler ist nicht online!");
                 config.set("Report.Selfreport", "Du kannst dich nicht selbst reporten!");
-                config.set("Report.Login", "Du hast dich eingeloggt!");
+                config.set("Report.Login", "Du hast dich eingeloggt.");
                 config.set("Report.Bereits eingeloggt", "Du bist bereits eingeloggt!");
-                config.set("Report.Logout", "Du hast dich ausgeloggt!");
+                config.set("Report.Logout", "Du hast dich ausgeloggt.");
                 config.set("Report.Bereits ausgeloggt", "Du bist bereits ausgeloggt!");
-                config.set("Report.Anderer User Login", "Der Spieler %PLAYER% hat sich eingeloggt!");
-                config.set("Report.Anderer User Logout", "Der Spieler %PLAYER% hat sich ausgeloggt!");
+                config.set("Report.Anderer User Login", "Der Spieler %PLAYER% hat sich eingeloggt.");
+                config.set("Report.Anderer User Logout", "Der Spieler %PLAYER% hat sich ausgeloggt.");
                 config.set("Report.Muss eingeloggt sein", "Du musst eingeloggt sein!");
-                config.set("Report.Keine Reports", "Es sind derzeit keine Reports offen!");
+                config.set("Report.Keine Reports", "Es sind derzeit keine Reports offen.");
                 config.set("Report.Neuer Report", "&c%PLAYER% &7wurde wegen &c%GRUND% &7reportet!");
                 config.set("Report.Nicht reportet", "Es existiert kein Report von diesem Spieler!");
-                config.set("Report.Schon reportet", "Es existiert bereits ein Report von diesem Spieler!");
-                config.set("Report.Reported Spieler offlien", "Der Spieler &c%PLAYER% &7ist nun offline und wurde aus der Liste gelöscht!");
-                config.set("Report.Reported Spieler offlien", "Der Spieler &c%PLAYER% &7ist nun offline und wurde aus der Liste gelöscht!");
+                config.set("Report.Reported Spieler offline", "Der Spieler &c%PLAYER% &7ist nun offline und wurde aus der Liste gelöscht!");
+                config.set("Report.Kein Report", "Du bearbeitest derzeit keinen &cReport&7!");
+                config.set("Report.Bearbeitet bereits", "Du bearbeitest derzeit schon einen &cReport &7➡ /&creport finish&7!");
+                config.set("Report.Muss Report schließen", "Du musst zuerst deinen &cReport &7erledigen ➡ /&creport finish&7!");
+                config.set("Report.Report finish", "Du hast den &cReport &7geschlossen.");
 
                 saveCfg();
             }
@@ -132,11 +137,20 @@ public class ConfigManager {
         noreportforthisplayer = config.getString("Report.Nicht reportet");
         noreportforthisplayer = ChatColor.translateAlternateColorCodes('&', noreportforthisplayer);
 
-        alreadyreported = config.getString("Report.Schon reportet");
-        alreadyreported = ChatColor.translateAlternateColorCodes('&', alreadyreported);
-
-        reportedplayeroffline = config.getString("Report.Reported Spieler offlien");
+        reportedplayeroffline = config.getString("Report.Reported Spieler offline");
         reportedplayeroffline = ChatColor.translateAlternateColorCodes('&', reportedplayeroffline);
+
+        noreport = config.getString("Report.Kein Report");
+        noreport = ChatColor.translateAlternateColorCodes('&', noreport);
+
+        alreadymakingreport = config.getString("Report.Bearbeitet bereits");
+        alreadymakingreport = ChatColor.translateAlternateColorCodes('&', alreadymakingreport);
+
+        mustreportfinish = config.getString("Report.Muss Report schließen");
+        mustreportfinish = ChatColor.translateAlternateColorCodes('&', mustreportfinish);
+
+        reportfinish = config.getString("Report.Report finish");
+        reportfinish = ChatColor.translateAlternateColorCodes('&', reportfinish);
         //Ende Report
     }
 

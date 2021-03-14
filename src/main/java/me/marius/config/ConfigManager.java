@@ -1,11 +1,11 @@
 //This file was created in 2021
 
-package me.littlq.config;
+package me.marius.config;
 
 import java.io.File;
 import java.io.IOException;
 
-import me.littlq.main.Main;
+import me.marius.main.Main;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -13,27 +13,29 @@ import net.md_5.bungee.config.YamlConfiguration;
 
 public class ConfigManager {
 
-    public static String prefix;
-    public static String wrongusage;
+    private Main plugin;
+    public ConfigManager(Main plugin) {
+        this.plugin = plugin;
+    }
 
-    public static String host;
-    public static int port;
-    public static String database;
-    public static String username;
-    public static String password;
+    public String prefix;
+    public String wrongusage;
 
-    public static String reportsucces;
-    public static String usernotonline;
-    public static String selfreport;
-    public static String login;
-    public static String alreadyloggedin;
-    public static String logout;
-    public static String alreadyloggedout;
-    public static String otheruserlogin;
-    public static String otheruserloggout;
-    public static String mustbeloggedin;
-    public static String openreports;
-    public static String newreport;
+    public String reportsucces;
+    public String usernotonline;
+    public String selfreport;
+    public String login;
+    public String alreadyloggedin;
+    public String logout;
+    public String alreadyloggedout;
+    public String otheruserlogin;
+    public String otheruserloggout;
+    public String mustbeloggedin;
+    public String noreportsopen;
+    public String newreport;
+    public String noreportforthisplayer;
+    public String alreadyreported;
+    public String reportedplayeroffline;
 
     public static Configuration config;
     public static File file;
@@ -55,11 +57,6 @@ public class ConfigManager {
 
                 config.set("Einstellungen.Prefix", "&c&lReport &8&l✕ &7");
                 config.set("Einstellungen.Falsche Argumentenkette", "Benutze /report <Spieler> <Grund>");
-                config.set("MySQL.Host", "localhost");
-                config.set("MySQL.Port", "3306");
-                config.set("MySQL.Database", "reportsystem");
-                config.set("MySQL.Username", "root");
-                config.set("MySQL.Password", "");
                 config.set("Report.Spieler reportet", "Du hast den Spieler &c%PLAYER% &7erfolgreich reportet!");
                 config.set("Report.Spieler nicht online", "Der Spieler ist nicht online!");
                 config.set("Report.Selfreport", "Du kannst dich nicht selbst reporten!");
@@ -72,6 +69,10 @@ public class ConfigManager {
                 config.set("Report.Muss eingeloggt sein", "Du musst eingeloggt sein!");
                 config.set("Report.Keine Reports", "Es sind derzeit keine Reports offen!");
                 config.set("Report.Neuer Report", "&c%PLAYER% &7wurde wegen &c%GRUND% &7reportet!");
+                config.set("Report.Nicht reportet", "Es existiert kein Report von diesem Spieler!");
+                config.set("Report.Schon reportet", "Es existiert bereits ein Report von diesem Spieler!");
+                config.set("Report.Reported Spieler offlien", "Der Spieler &c%PLAYER% &7ist nun offline und wurde aus der Liste gelöscht!");
+                config.set("Report.Reported Spieler offlien", "Der Spieler &c%PLAYER% &7ist nun offline und wurde aus der Liste gelöscht!");
 
                 saveCfg();
             }
@@ -90,15 +91,6 @@ public class ConfigManager {
         wrongusage = ChatColor.translateAlternateColorCodes('&', wrongusage);
 
         //Ende Einstellungen
-        //MySQL
-
-        host = config.getString("MySQL.Host");
-        port = config.getInt("MySQL.Port");
-        database = config.getString("MySQL.Database");
-        username = config.getString("MySQL.Username");
-        password = config.getString("MySQL.Password");
-
-        //Ende MySQL
         //Report
 
         reportsucces = config.getString("Report.Spieler reportet");
@@ -131,12 +123,20 @@ public class ConfigManager {
         mustbeloggedin = config.getString("Report.Muss eingeloggt sein");
         mustbeloggedin = ChatColor.translateAlternateColorCodes('&', mustbeloggedin);
 
-        openreports = config.getString("Report.Keine Reports");
-        openreports = ChatColor.translateAlternateColorCodes('&', openreports);
+        noreportsopen = config.getString("Report.Keine Reports");
+        noreportsopen = ChatColor.translateAlternateColorCodes('&', noreportsopen);
 
         newreport = config.getString("Report.Neuer Report");
         newreport = ChatColor.translateAlternateColorCodes('&', newreport);
 
+        noreportforthisplayer = config.getString("Report.Nicht reportet");
+        noreportforthisplayer = ChatColor.translateAlternateColorCodes('&', noreportforthisplayer);
+
+        alreadyreported = config.getString("Report.Schon reportet");
+        alreadyreported = ChatColor.translateAlternateColorCodes('&', alreadyreported);
+
+        reportedplayeroffline = config.getString("Report.Reported Spieler offlien");
+        reportedplayeroffline = ChatColor.translateAlternateColorCodes('&', reportedplayeroffline);
         //Ende Report
     }
 

@@ -1,30 +1,43 @@
 //This file was created in 2021
 
-package me.littlq.main;
+package me.marius.main;
 
-import me.littlq.commands.cmd_report;
-import me.littlq.config.ConfigManager;
-import me.littlq.mysql.MySQL;
+import me.marius.commands.cmd_report;
+import me.marius.config.ConfigManager;
+import me.marius.listeners.DisconnectListener;
+import me.marius.listeners.ServerSwitchListener;
+import me.marius.report.Report;
+import me.marius.utils.Utils;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class Main extends Plugin {
 
     private boolean configisrunning;
     private Thread ConfigThread;
 
-    public static ConfigManager cm;
+    private ConfigManager configManager;
+    private cmd_report cmd_report;
+    private Utils utils;
+    private Report report;
+    private DisconnectListener disconnectListener;
+    private ServerSwitchListener serverSwitchListener;
 
     private static Main plugin;
 
     public void onEnable() {
 
+        configManager = new ConfigManager(this);
+        cmd_report = new cmd_report(this);
+        utils = new Utils(this);
+        report = new Report(this);
+        disconnectListener = new DisconnectListener(this);
+        serverSwitchListener = new ServerSwitchListener(this);
+
         plugin = this;
 
         //CONFIG
-        cm = new ConfigManager();
 
         configisrunning = !configisrunning;
 
@@ -47,11 +60,9 @@ public class Main extends Plugin {
                         ConfigThread = Thread.currentThread();
 
                         try {
-                            cm.register();
+                            configManager.register();
                         } catch (IOException e) {
                         }
-
-
 
                         ConfigThread.interrupt();
                         configisrunning = false;
@@ -59,14 +70,11 @@ public class Main extends Plugin {
                 }
             }.start();
         }
-
-        MySQL.connect();
-
         //ENDE CONFIG
 
         getProxy().getPluginManager().registerCommand(this, new cmd_report());
-
-        //Bukkit.getPluginManager().registerEvents(new LISTENER(), this);
+        getProxy().getPluginManager().registerListener(this, new DisconnectListener(this));
+        getProxy().getPluginManager().registerListener(this, new ServerSwitchListener(this));
 
 // -------------------------------
         System.out.println("----------[ReportSystem]----------");
@@ -79,15 +87,7 @@ public class Main extends Plugin {
 
     public void onDisable() {
 
-        if(MySQL.isConnected()) {
-            try {
-                MySQL.disconnect();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-        }
-
-        cm.saveCfg();
+        configManager.saveCfg();
 
 // -------------------------------
         System.out.println("----------[ReportSystem]----------");
@@ -99,8 +99,11 @@ public class Main extends Plugin {
 
     }
 
-    public static Main getPlugin(){
-        return plugin;
-    }
-
+    public ServerSwitchListener getServerSwitchListener(){ return serverSwitchListener; }
+    public DisconnectListener getDisconnectListener(){ return disconnectListener; }
+    public Report getReport(){ return report; }
+    public Utils getUtils() { return utils; }
+    public static Main getPlugin(){ return plugin; }
+    public ConfigManager getConfigManager(){ return configManager; }
+    public cmd_report getCmd_report(){ return cmd_report; }
 }

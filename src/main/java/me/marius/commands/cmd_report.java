@@ -24,8 +24,8 @@ public class cmd_report extends Command {
         super("report");
     }
 
-    public List<ProxiedPlayer> loggin = new ArrayList<>();
-    public List<ProxiedPlayer> reportmodus = new ArrayList<>();
+    public static List<ProxiedPlayer> loggin = new ArrayList<>();
+    public static List<ProxiedPlayer> reportmodus = new ArrayList<>();
 
     public String cause;
 
@@ -94,7 +94,7 @@ public class cmd_report extends Command {
                                             p.sendMessage(plugin.getConfigManager().prefix + "----------= §c§lReports §7=----------");
                                             for (ProxiedPlayer reportet : Report.reported.keySet()) {
                                                 p.sendMessage("§7Spieler: §c" + reportet.getName() + " §8┃ §7wegen: §c" +
-                                                        Report.reported_cause.get(reportet) + " §8┃ §7von: §c" + plugin.getReport().getReporter(Report.reported.get(reportet)) +
+                                                        Report.reported_cause.get(reportet) + " §8┃ §7von: §c" + plugin.getReport().reported.get(reportet) +
                                                         " §8┃ §7aktuell auf §c" + reportet.getServer().getInfo().getName());
                                                 continue;
                                             }
@@ -129,10 +129,20 @@ public class cmd_report extends Command {
                                             if (!Report.reported.isEmpty()) {
                                                 for (ProxiedPlayer reportet : Report.reported.keySet()) {
                                                     if (Report.reported.values().iterator().hasNext()) {
-                                                        reportmodus.add(p);
-                                                        p.sendMessage(plugin.getConfigManager().prefix + "Du hast den Spieler §c" + reportet + " §7angenommen!");
+                                                        String reportaccept = plugin.getConfigManager().reportaccept.replace("%PLAYER%", reportet.getName());
+                                                        String reportcause = plugin.getConfigManager().reportcause.replace("%GRUND%", Report.reported_cause.get(reportet));
+                                                        String reportetfrom = plugin.getConfigManager().reportfrom.replace("%PLAYER%", Report.reported.get(reportet).getName());
+                                                        String reportetauf = plugin.getConfigManager().reportetauf.replace("%SERVER%", reportet.getServer().getInfo().getName());
+                                                        p.sendMessage("");
+                                                        p.sendMessage(plugin.getConfigManager().prefix + reportaccept);
+                                                        p.sendMessage(plugin.getConfigManager().prefix + reportcause);
+                                                        p.sendMessage(plugin.getConfigManager().prefix + reportetfrom);
+                                                        p.sendMessage(plugin.getConfigManager().prefix + reportetauf);
+                                                        p.sendMessage("");
                                                         p.connect(ProxyServer.getInstance().getServerInfo(reportet.getServer().getInfo().getName()));
                                                         Report.reported.remove(reportet);
+                                                        Report.reported_cause.remove(reportet);
+                                                        reportmodus.add(p);
                                                         break;
                                                     }
                                                 }
@@ -161,8 +171,16 @@ public class cmd_report extends Command {
                                         super.run();
                                         while(isrunningGetReportInfo){
 
-                                            p.sendMessage("Report Info");
-
+                                            for(ProxiedPlayer reportet : Report.reported.keySet()) {
+                                                String reportaccept = plugin.getConfigManager().reportaccept.replace("%PLAYER%", reportet.getName());
+                                                String reportcause = plugin.getConfigManager().reportcause.replace("%GRUND%", Report.reported_cause.get(reportet));
+                                                String reportetfrom = plugin.getConfigManager().reportfrom.replace("%PLAYER%", Report.reported.get(reportet).getName());
+                                                String reportetauf = plugin.getConfigManager().reportetauf.replace("%SERVER%", reportet.getServer().getInfo().getName());
+                                                p.sendMessage(plugin.getConfigManager().prefix + reportaccept);
+                                                p.sendMessage(plugin.getConfigManager().prefix + reportcause);
+                                                p.sendMessage(plugin.getConfigManager().prefix + reportetfrom);
+                                                p.sendMessage(plugin.getConfigManager().prefix + reportetauf);
+                                            }
                                             try{
                                                 Thread.sleep(250);
                                             }catch (InterruptedException ex){
@@ -193,10 +211,20 @@ public class cmd_report extends Command {
                                 if(!reportmodus.contains(p)) {
                                     reportedplayer = ProxyServer.getInstance().getPlayer(args[1]);
                                     if (Report.reported.containsKey(reportedplayer)) {
-                                        reportmodus.add(p);
-                                        Report.reported.remove(reportedplayer);
-                                        p.sendMessage(plugin.getConfigManager().prefix + "Du hast den Spieler §c" + reportedplayer + " §7angenommen!");
+                                        String reportaccept = plugin.getConfigManager().reportaccept.replace("%PLAYER%", reportedplayer.getName());
+                                        String reportcause = plugin.getConfigManager().reportcause.replace("%GRUND%", Report.reported_cause.get(reportedplayer));
+                                        String reportetfrom = plugin.getConfigManager().reportfrom.replace("%PLAYER%", Report.reported.get(reportedplayer).getName());
+                                        String reportetauf = plugin.getConfigManager().reportetauf.replace("%SERVER%", reportedplayer.getServer().getInfo().getName());
+                                        p.sendMessage("");
+                                        p.sendMessage(plugin.getConfigManager().prefix + reportaccept);
+                                        p.sendMessage(plugin.getConfigManager().prefix + reportcause);
+                                        p.sendMessage(plugin.getConfigManager().prefix + reportetfrom);
+                                        p.sendMessage(plugin.getConfigManager().prefix + reportetauf);
+                                        p.sendMessage("");
                                         p.connect(ProxyServer.getInstance().getServerInfo(reportedplayer.getServer().getInfo().getName()));
+                                        Report.reported.remove(reportedplayer);
+                                        Report.reported_cause.remove(reportedplayer);
+                                        reportmodus.add(p);
                                     } else
                                         p.sendMessage(plugin.getConfigManager().prefix + plugin.getConfigManager().noreportforthisplayer);
                                 }else

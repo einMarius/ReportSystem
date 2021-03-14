@@ -75,7 +75,7 @@ public class Main extends Plugin {
 
         getProxy().getPluginManager().registerCommand(this, new cmd_report(this));
         getProxy().getPluginManager().registerListener(this, new DisconnectListener(this));
-        //getProxy().getPluginManager().registerListener(this, new ServerSwitchListener(this));
+        getProxy().getPluginManager().registerListener(this, new ServerSwitchListener(this));
 
 // -------------------------------
         System.out.println("----------[ReportSystem]----------");

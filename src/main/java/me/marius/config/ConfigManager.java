@@ -39,6 +39,10 @@ public class ConfigManager {
     public String alreadymakingreport;
     public String mustreportfinish;
     public String reportfinish;
+    public String reportaccept;
+    public String reportcause;
+    public String reportfrom;
+    public String reportetauf;
 
     public static Configuration config;
     public static File file;
@@ -77,6 +81,10 @@ public class ConfigManager {
                 config.set("Report.Kein Report", "Du bearbeitest derzeit keinen &cReport&7!");
                 config.set("Report.Bearbeitet bereits", "Du bearbeitest derzeit schon einen &cReport &7➡ /&creport finish&7!");
                 config.set("Report.Muss Report schließen", "Du musst zuerst deinen &cReport &7erledigen ➡ /&creport finish&7!");
+                config.set("Report.Report angenommen", "Du hast den Report von &c%PLAYER% &7angenommen.");
+                config.set("Report.Report Grund", "Grund: &c%GRUND%");
+                config.set("Report.Report Von", "Reportet von: &c%PLAYER%");
+                config.set("Report.Reportet-Spieler auf", "Aktuell auf: &c%SERVER%");
                 config.set("Report.Report finish", "Du hast den &cReport &7geschlossen.");
 
                 saveCfg();
@@ -148,6 +156,18 @@ public class ConfigManager {
 
         mustreportfinish = config.getString("Report.Muss Report schließen");
         mustreportfinish = ChatColor.translateAlternateColorCodes('&', mustreportfinish);
+
+        reportaccept = config.getString("Report.Report angenommen");
+        reportaccept = ChatColor.translateAlternateColorCodes('&', reportaccept);
+
+        reportcause = config.getString("Report.Report Grund");
+        reportcause = ChatColor.translateAlternateColorCodes('&', reportcause);
+
+        reportfrom = config.getString("Report.Report Von");
+        reportfrom = ChatColor.translateAlternateColorCodes('&', reportfrom);
+
+        reportetauf = config.getString("Report.Reportet-Spieler auf");
+        reportetauf = ChatColor.translateAlternateColorCodes('&', reportetauf);
 
         reportfinish = config.getString("Report.Report finish");
         reportfinish = ChatColor.translateAlternateColorCodes('&', reportfinish);

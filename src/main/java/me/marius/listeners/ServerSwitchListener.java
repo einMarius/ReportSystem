@@ -1,5 +1,6 @@
 package me.marius.listeners;
 
+import me.marius.commands.cmd_report;
 import me.marius.main.Main;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -19,12 +20,10 @@ public class ServerSwitchListener implements Listener {
 
         ProxiedPlayer p = e.getPlayer();
 
-        for(ProxiedPlayer team : ProxyServer.getInstance().getPlayers()){
-            if(team.hasPermission("report.team")){
-                if (!plugin.getCmd_report().reportmodus.contains(team)) {
-                if(team.getServer().getInfo().getName() == p.getServer().getInfo().getName()) {
-                        team.sendMessage(plugin.getConfigManager().prefix + p.getName() + " hat den Server im Reportmodus betreten!");
-                    }
+        for(ProxiedPlayer team : cmd_report.loggin){
+            if (cmd_report.reportmodus.contains(p)) {
+                if (team.getServer().getInfo().getName() == p.getServer().getInfo().getName()) {
+                    team.sendMessage(plugin.getConfigManager().prefix + p.getName() + " hat den Server im Reportmodus betreten!");
                 }
             }
         }
